@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql_catalogo_carrinho
+    environment:
+      MYSQL_DATABASE: catalogo_carrinho
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - dados_mysql_catalogo:/var/lib/mysql
+
+volumes:
+  dados_mysql_catalogo:
