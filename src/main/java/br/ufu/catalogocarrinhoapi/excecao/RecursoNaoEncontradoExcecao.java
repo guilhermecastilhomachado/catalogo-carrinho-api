@@ -1,4 +1,7 @@
 package br.ufu.catalogocarrinhoapi.excecao;
 
-public class RecursoNaoEncontradoExcecao {
+public class RecursoNaoEncontradoExcecao extends RuntimeException {
+    public RecursoNaoEncontradoExcecao(String mensagem) {
+        super(mensagem);
+    }
 }
