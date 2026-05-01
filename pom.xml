@@ -79,6 +79,15 @@
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <!--
+              application-test.properties fica em src/main/resources e pode ser usado ao subir a aplicação
+              com APP_PROFILE=test. Para isso, o driver do H2 precisa estar disponível em runtime.
+            -->
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
