@@ -73,6 +73,9 @@ Simular um **catálogo de produtos** com **carrinho de compras** e um **checkout
 - Remoção de itens
 - Checkout simplificado (finalização)
 - Atualização do estoque após finalização
+- Paginação e ordenação em listagens
+- Persistência do checkout em histórico de pedidos
+- Consulta de pedidos por ID e por carrinho de origem
 
 ### Qualidade
 - Validações com mensagens amigáveis
@@ -155,6 +158,13 @@ A API expõe documentação interativa via Swagger UI:
 | PUT | `/carrinhos/{carrinhoId}/itens/{itemId}` | Atualiza quantidade de um item |
 | DELETE | `/carrinhos/{carrinhoId}/itens/{itemId}` | Remove item do carrinho |
 | POST | `/carrinhos/{carrinhoId}/checkout` | Finaliza carrinho (checkout) |
+
+### Pedidos
+| Método | Rota                             | Descrição                         |
+|-------:|----------------------------------|-----------------------------------|
+|    GET | `/pedidos`                       | Lista pedidos                     |
+|    GET | `/pedidos/{id}`                  | Busca pedidos por ID              |
+|    GET | `/pedidos/carrinho/{carrinhoId}` | Busca pedidos pelo ID do carrinho |
 
 ---
 
@@ -321,8 +331,6 @@ Quando algum campo falha em `@Valid`, a resposta inclui um mapa `campos` com as 
 ## Melhorias futuras (roadmap)
 
 - Autenticação e autorização (ex.: Spring Security + JWT)
-- Histórico de pedidos / persistência do checkout
-- Paginação e ordenação em listagens
 - Upload de imagem de produto
 - Observabilidade (logs estruturados, métricas)
 
