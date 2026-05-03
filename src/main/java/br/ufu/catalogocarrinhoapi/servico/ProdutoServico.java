@@ -6,8 +6,11 @@ import br.ufu.catalogocarrinhoapi.modelo.Produto;
 import br.ufu.catalogocarrinhoapi.repositorio.ProdutoRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +25,6 @@ public class ProdutoServico {
         produto.setCategoria(categoria);
 
         return produtoRepositorio.save(produto);
-    }
-
-    public List<Produto> listarProdutos() {
-        return produtoRepositorio.findAll();
     }
 
     public Produto buscarProdutoPorId(Long id) {
@@ -53,8 +52,23 @@ public class ProdutoServico {
         produtoRepositorio.delete(produto);
     }
 
-    public List<Produto> listarProdutosPorCategoria(Long categoriaId) {
+    public Page<Produto> listarProdutosPaginados(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return produtoRepositorio.findAll(pageable);
+    }
+
+    public Page<Produto> listarProdutosPorCategoriaPaginados(Long categoriaId, int page, int size, String sortBy, String direction) {
         categoriaServico.buscarCategoriaPorId(categoriaId);
-        return produtoRepositorio.findByCategoriaId(categoriaId);
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return produtoRepositorio.findByCategoriaId(categoriaId, pageable);
     }
 }

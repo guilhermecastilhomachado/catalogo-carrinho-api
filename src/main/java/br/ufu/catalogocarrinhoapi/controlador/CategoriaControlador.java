@@ -6,8 +6,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/categorias")
@@ -23,8 +23,13 @@ public class CategoriaControlador {
     }
 
     @GetMapping
-    public List<Categoria> listarCategorias() {
-        return categoriaServico.listarCategorias();
+    public Page<Categoria> listarCategorias(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "nome") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return categoriaServico.listarCategoriasPaginadas(page, size, sortBy, direction);
     }
 
     @GetMapping("/{id}")

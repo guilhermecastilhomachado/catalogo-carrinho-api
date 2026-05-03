@@ -5,8 +5,11 @@ import br.ufu.catalogocarrinhoapi.modelo.Categoria;
 import br.ufu.catalogocarrinhoapi.repositorio.CategoriaRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,13 +21,18 @@ public class CategoriaServico {
         return categoriaRepositorio.save(categoria);
     }
 
-    public List<Categoria> listarCategorias() {
-        return categoriaRepositorio.findAll();
-    }
-
     public Categoria buscarCategoriaPorId(Long id) {
         return categoriaRepositorio.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoExcecao("Categoria nao encontrada com id: " + id));
+    }
+
+    public Page<Categoria> listarCategoriasPaginadas(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return categoriaRepositorio.findAll(pageable);
     }
 
     public Categoria atualizarCategoria(Long id, Categoria categoriaAtualizada) {
