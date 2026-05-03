@@ -12,6 +12,11 @@ import br.ufu.catalogocarrinhoapi.repositorio.ItemCarrinhoRepositorio;
 import br.ufu.catalogocarrinhoapi.repositorio.ProdutoRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import br.ufu.catalogocarrinhoapi.modelo.Pedido;
+import br.ufu.catalogocarrinhoapi.modelo.ItemPedido;
+import br.ufu.catalogocarrinhoapi.repositorio.PedidoRepositorio;
+
+import java.util.ArrayList;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,6 +30,7 @@ public class CarrinhoServico {
     private final ItemCarrinhoRepositorio itemCarrinhoRepositorio;
     private final ProdutoServico produtoServico;
     private final ProdutoRepositorio produtoRepositorio;
+    private final PedidoRepositorio pedidoRepositorio;
 
     public Carrinho criarCarrinho() {
         Carrinho carrinho = new Carrinho();
@@ -137,6 +143,9 @@ public class CarrinhoServico {
         carrinho.setStatus(StatusCarrinho.FINALIZADO);
         recalcularValorTotal(carrinho);
 
+        Pedido pedido = criarPedidoAPartirDoCarrinho(carrinho);
+        pedidoRepositorio.save(pedido);
+
         return carrinhoRepositorio.save(carrinho);
     }
 
@@ -160,5 +169,26 @@ public class CarrinhoServico {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         carrinho.setValorTotal(total);
+    }
+
+    private Pedido criarPedidoAPartirDoCarrinho(Carrinho carrinho) {
+        Pedido pedido = new Pedido();
+        pedido.setCarrinhoIdOrigem(carrinho.getId());
+        pedido.setValorTotal(carrinho.getValorTotal());
+        pedido.setItens(new ArrayList<>());
+
+        for (ItemCarrinho item : carrinho.getItens()) {
+            ItemPedido itemPedido = ItemPedido.builder()
+                    .nomeProduto(item.getProduto().getNome())
+                    .quantidade(item.getQuantidade())
+                    .precoUnitario(item.getPrecoUnitario())
+                    .subtotal(item.getSubtotal())
+                    .pedido(pedido)
+                    .build();
+
+            pedido.getItens().add(itemPedido);
+        }
+
+        return pedido;
     }
 }
